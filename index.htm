@@ -1,0 +1,977 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Creuant el riu</title>
+
+    <link rel="stylesheet" type="text/css" href="css/estilos.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="css/logo_conf.css" media="screen"/>
+   <!-- <link rel="stylesheet" href="include/style.css">-->
+    <script src="js/plugins/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="js/plugins/jquery-ui.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/plugins/jqueryuitouchpunch.js"></script>
+    <script type="text/javascript" src="js/plugins/jquery.jrumble.1.3.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jQueryRotate.js"></script>
+     <script type="text/javascript" src="data/textos/textos.js"></script>
+
+    <script src="classes/ball.js"></script>
+    <script src="include/utils.js"></script>
+   
+
+    <div id='fondo'>
+
+    <div id='fondo_final'></div>
+
+    <div id='top'></div>
+
+    <div id='bottom'></div>
+
+    <div id='logo'></div>
+
+    <div id='fondo_rio'></div>
+
+    <canvas id="canvas" width="960" height="600" class=""></canvas>
+    <canvas id="canvas_2" width="960" height="600" class=""></canvas>
+    <canvas id="canvas_3" width="960" height="600" class=""></canvas>
+
+    <div id="boton_start" class="boton"></div>
+    <div id="boton_reiniciar" class="boton"></div>
+    <div id="boton_final" class="boton"></div>
+    <div id="boton_principio" class="boton"></div>
+
+
+    <div id="slider" class="slider_opacidad">
+
+       <div id="slider_boton" class="slider"></div>
+
+    </div>
+
+    <div id="slider_canoa" class="slider_opacidad">
+
+       <div id="slider_boton_canoa" class="slider"></div>
+
+    </div>
+
+    <div id="muestra_remo" class="muestra div"></div>
+    <div id="muestra_rio" class="muestra div"></div>
+
+    <div id="boton_fuerzas_0" class="boton_f div"></div>
+    <div id="boton_fuerzas_1" class="boton_f div"></div>
+    <div id="boton_resultante_0" class="boton_f div"></div>
+    <div id="boton_resultante_1" class="boton_f div"></div>
+
+    <div id="calculos_final" class="div"></div>
+    <div id="raiz" class="div"></div>
+
+    <div id="flecha_1" class="flecha"></div>
+    <div id="flecha_2" class="flecha"></div>
+
+    <div id="texto_1" class="texto div"></div>
+    <div id="texto_2" class="texto div"></div>
+    <div id="texto_3" class="texto div"></div>
+    <div id="texto_4" class="texto div"></div>
+
+     <div id="slider_fake" class="div"></div>
+
+     <div id="cartel" class="div"></div>
+     <div id="cartel_final" class="div"></div>
+
+    <div id='preloader' class='preloader_stuff'>
+              
+                           <div id='preloaderPercent' class='preloader_stuff'></div>
+
+                           <div id='preloaderBar_cont' class='preloader_stuff'>                                 
+                                             <div id='preloaderBar' class='preloader_stuff'></div>
+
+                           </div>
+
+     </div>
+
+    </div>
+
+    <audio id='bien'>
+                              <source src="data/audio/bien.ogg" type="audio/ogg">
+                              <source src="data/audio/bien.mp3" type="audio/mpeg">               
+    </audio>
+    <audio id='mal'>
+                              <source src="data/audio/mal.ogg" type="audio/ogg">
+                              <source src="data/audio/mal.mp3" type="audio/mpeg">               
+    </audio>
+    <audio id='cascada_sonido'>
+                              <source src="data/audio/cascada_sonido.ogg" type="audio/ogg">
+                              <source src="data/audio/cascada_sonido.mp3" type="audio/mpeg">               
+    </audio>
+    <audio id='pop'>
+                              <source src="data/audio/pop.ogg" type="audio/ogg">
+                              <source src="data/audio/pop.mp3" type="audio/mpeg">               
+    </audio>
+    <audio id='grito'>
+                              <source src="data/audio/grito.ogg" type="audio/ogg">
+                              <source src="data/audio/grito.mp3" type="audio/mpeg">               
+    </audio>
+    <audio id='tronco'>
+                              <source src="data/audio/tronco.ogg" type="audio/ogg">
+                              <source src="data/audio/tronco.mp3" type="audio/mpeg">               
+    </audio>
+    <audio id='rocas'>
+                              <source src="data/audio/rocas.ogg" type="audio/ogg">
+                              <source src="data/audio/rocas.mp3" type="audio/mpeg">               
+    </audio>
+
+  </head>
+  <body>
+
+     <script>
+
+$( document ).ready(function() {
+
+
+
+var UrlDir = 'data/imgns/';
+var arrayImagenes = ["barca_1.png", "barca_2.png","cartel.png","cascada_1.png","cascada_2.png","cascada_3.png","cruz.png","efecto_agua_1.png","efecto_agua_2.png","efecto_agua_3.png","efecto_agua_4.png","efecto_agua_puntitos.png","espuma_1.png","espuma_2.png","fondo_rio.jpg","muelle.png","ok.png","prueba.png","raiz.png","slider.png","slider_fondo.png","tronco.png"];
+
+var loadedImgs = 0;
+
+function preload(funct) {
+
+
+  for (i = 0; i < arrayImagenes.length; i++) {
+    var img = new Image();
+  img.onload = function() {
+    loadedImgs++;
+  
+
+    $('#preloaderBar').css({'width':(loadedImgs/arrayImagenes.length)*100.0+'%'}); 
+    $('#preloaderPercent').html(parseInt((loadedImgs/arrayImagenes.length)*100.0)+'%'); 
+    if(loadedImgs == arrayImagenes.length - 1) {
+  
+
+     $('#preloader').hide() 
+    
+    }
+  };
+    img.src = UrlDir+arrayImagenes[i];
+  }
+}
+
+preload()
+
+
+//evitar preload
+//$('#preloader').hide()  
+
+
+
+$(document).on('touchmove', function(e) {
+    if (!$(e.target).parents('.scroll')[0]) {
+        e.preventDefault();
+    }
+});
+
+
+
+var logo_ancho = ($('#logo').width()/960) * 100;
+var logo_alto = ($('#logo').height()/600) * 100;
+var logo_left = ($('#logo').position().left/960) * 100;
+var logo_top = ($('#logo').position().top/600) * 100;
+
+$('#logo').css({ width: +logo_ancho+'%', height: +logo_alto+'%', left: +logo_left+'%', top: +logo_top+'%'});
+
+
+
+//para el resize
+
+setInterval(function(){
+
+if( $(window).height() > 600 ) { $('#fondo').css({ height: '100%', width: $(window).height()*1.6 + 'px'  }) };
+if( $(window).height() < 600 ) {
+                               $('#fondo').css({ height: '100%', width: $(window).height()*1.6 + 'px'  })
+                                         }
+         if( $(window).width() < 960 ) {
+                               $('#fondo').css({ height: $(window).width()/1.6 + 'px', width: '100%' })
+                                         }
+        if( $(window).height() < 600  &&  $(window).width() < 960 ) {
+                        if( $(window).width()   >   $(window).height()*1.6 ){
+                               $('#fondo').css({ height: '100%', width: $(window).height()*1.6 + 'px'  })
+                       }else{
+                               $('#fondo').css({ height: $(window).width()/1.6 + 'px', width: '100%' })
+                       } 
+     }
+     
+    $('.canvas').css({ height: $('#fondo').height() + 'px', width: $('#fondo').width() + 'px' }); 
+
+ //dejando bien los textos
+ 
+ var ancho_fondo = (600) / ($('#fondo').height()); 
+
+ $('#top').css({ 'font-size' : 20/ancho_fondo + 'px'}).addClass('estilos_cabecera'); 
+ $('.texto').css({'font-size':20/ancho_fondo+'px','line-height':25/ancho_fondo+'px'});
+ $('.muestra').css({'font-size':25/ancho_fondo+'px','line-height':25/ancho_fondo+'px'});
+ $('#calculos_final').css({'font-size':26/ancho_fondo+'px','line-height':25/ancho_fondo+'px'});
+ $('.texto').css({'font-size':26/ancho_fondo+'px','line-height':25/ancho_fondo+'px'});
+ $('.boton').css({'font-size':23/ancho_fondo+'px','line-height':25/ancho_fondo+'px'});
+ $('#cartel').css({'font-size':20/ancho_fondo+'px','line-height':30/ancho_fondo+'px'});
+ $('#cartel_final').css({'font-size':25/ancho_fondo+'px','line-height':30/ancho_fondo+'px'});
+ 
+
+ 
+ var logo_ancho = ($('#logo').width()/$('#fondo').width()) * 100;
+ var logo_alto = ($('#logo').height()/$('#fondo').height()) * 100;
+
+$('#logo').css({ width: +logo_ancho+'%', height: +logo_alto+'%'});
+ 
+}, 10); // fin del resize
+
+
+
+//fuera para el principio
+
+if( $(window).height() > 600 ) { $('#fondo').css({ height: '100%', width: $(window).height()*1.6 + 'px'  }) };
+if( $(window).height() < 600 ) {
+                               $('#fondo').css({ height: '100%', width: $(window).height()*1.6 + 'px'  })
+                                         }
+         if( $(window).width() < 960 ) {
+                               $('#fondo').css({ height: $(window).width()/1.6 + 'px', width: '100%' })
+                                         }
+        if( $(window).height() < 600  &&  $(window).width() < 960 ) {
+                        if( $(window).width()   >   $(window).height()*1.6 ){
+                               $('#fondo').css({ height: '100%', width: $(window).height()*1.6 + 'px'  })
+                       }else{
+                               $('#fondo').css({ height: $(window).width()/1.6 + 'px', width: '100%' })
+                       } 
+        }
+
+  $(document).on('touchmove', function(e) {
+    if (!$(e.target).parents('.scroll')[0]) {
+        e.preventDefault();
+    }
+  });
+
+//reiniciar cd resize
+
+setTimeout(function(){
+
+ $(window).bind('resize', function(e)
+{
+  if (window.RT) clearTimeout(window.RT);
+  window.RT = setTimeout(function()
+  {
+    this.location.reload(false);  //false to get page from cache 
+  }, 100);
+});
+
+}, 3000)
+
+
+    
+ //dejando bien los textos
+ 
+ var ancho_fondo = (600) / ($('#fondo').height())
+
+ $('.texto').css({'font-size':20/ancho_fondo+'px','line-height':25/ancho_fondo+'px'}).addClass('estilos_normales');
+ $('.muestra').css({'font-size':25/ancho_fondo+'px','line-height':25/ancho_fondo+'px'}).addClass('estilos_normales');
+  $('#calculos_final').css({'font-size':26/ancho_fondo+'px','line-height':25/ancho_fondo+'px'}).addClass('estilos_normales');
+  $('.texto').css({'font-size':26/ancho_fondo+'px','line-height':25/ancho_fondo+'px'}).addClass('estilos_normales');
+  $('.boton').css({'font-size':26/ancho_fondo+'px','line-height':25/ancho_fondo+'px'}).addClass('estilos_normales');
+  $('#cartel').css({'font-size':20/ancho_fondo+'px','line-height':30/ancho_fondo+'px'}).addClass('estilos_normales');
+  $('#cartel_final').css({'font-size':25/ancho_fondo+'px','line-height':30/ancho_fondo+'px'}).addClass('estilos_normales');
+
+
+ //////// empieza la animación
+
+ //sonidos
+
+    bien = document.getElementById("bien");
+    mal = document.getElementById("mal");
+    cascada_sonido = document.getElementById("cascada_sonido");
+    cascada_sonido.loop = true;
+    cascada_sonido.volume = 0.1;
+    pop = document.getElementById("pop");
+    grito = document.getElementById("grito");
+    tronco = document.getElementById("tronco");
+    rocas = document.getElementById("rocas");
+
+
+$('#top').html(textos.top_inicio);
+$('#texto_1').html(textos.texto_1);
+$('#texto_2').html(textos.texto_2);
+$('#texto_3').html(textos.texto_3);
+$('#texto_4').html(textos.texto_4);
+$('#boton_start').html(textos.boton_start);
+$('#boton_reiniciar').html(textos.boton_reiniciar);
+$('#boton_final').html(textos.boton_final);
+$('#boton_principio').html(textos.boton_principio);
+$('#cartel').html(textos.cartel);
+$('#cartel_final').html(textos.cartel_final);
+
+
+      setInterval(function(){
+
+          ancho_slider = $('#slider').width();
+
+          ancho_boton_slider = $('#slider_boton').width();
+
+          posicion_boton_slider =  $('#slider_boton').position().left;
+
+          relativo_boton_slider = (ancho_slider/(ancho_slider-ancho_boton_slider))*(posicion_boton_slider/ancho_slider);
+
+          valor_pos_bot_slider = relativo_boton_slider;
+
+          revoluciones_pre = Math.round(valor_pos_bot_slider * 100) / 100; 
+            
+      }, 100);
+
+      setInterval(function(){
+
+          ancho_slider_canoa = $('#slider_canoa').width();
+
+          ancho_boton_slider_canoa = $('#slider_boton_canoa').width();
+
+          posicion_boton_slider_canoa =  $('#slider_boton_canoa').position().left;
+
+          relativo_boton_slider_canoa = (ancho_slider_canoa/(ancho_slider_canoa-ancho_boton_slider_canoa))*(posicion_boton_slider_canoa/ancho_slider_canoa);
+
+          valor_pos_bot_slider_canoa = relativo_boton_slider_canoa;
+
+          revoluciones_pre_canoa = Math.round(valor_pos_bot_slider_canoa * 100) / 100; 
+            
+      }, 100);
+
+
+      $('#slider_boton').draggable({
+  
+          axis: "x",
+          containment: "parent",
+          delay: 0,
+          revert: false,
+          revertDuration: 10,
+          start: function( event, ui ){                                                                           
+                               
+          },
+          stop: function( event, ui ) {                                                
+                                                                                                              
+          },
+          drag: function( event, ui ) { 
+          }                           
+      });
+
+      $('#slider_boton_canoa').draggable({
+  
+          axis: "x",
+          containment: "parent",
+          delay: 0,
+          revert: false,
+          revertDuration: 10,
+          start: function( event, ui ){                                                                           
+                               
+          },
+          stop: function( event, ui ) {                                                
+                                                                                                              
+          },
+          drag: function( event, ui ) { 
+          }                           
+      });
+    
+       // document.location.href = document.location.href;
+
+      var canvas = document.getElementById('canvas');
+      var context = canvas.getContext('2d');
+
+      var canvas_2 = document.getElementById('canvas_2');
+      var context_2 = canvas_2.getContext('2d');
+
+      var canvas_3 = document.getElementById('canvas_3');
+      var context_3 = canvas_3.getContext('2d');
+
+      var boxes = [];
+      var canoa = setProperties('barca_1', 90, 90, 0, 0);
+      var puerto = setProperties('muelle', 135, 90, 600, 50);
+      var roca_1 = setProperties('prueba', 40, 830, 0, 65);
+      var cascada = setProperties('prueba', 560, 130, 850, 40);
+      var tronco_1 = setProperties('tronco', 20, 60, 0, 400);
+      var tronco_2 = setProperties('tronco', 20, 60, 0, 400);
+      //var tronco_3 = setProperties('tronco', 20, 60, 0, 400);
+      boxes.push(canoa, puerto, roca_1, cascada, tronco_1, tronco_2);
+
+      var efecto_agua_1 = new Image();
+      efecto_agua_1.src = 'data/imgns/efecto_agua_1.png';
+      var efecto_agua_2 = new Image();
+      efecto_agua_2.src = 'data/imgns/efecto_agua_2.png';
+      var efecto_agua_3 = new Image();
+      efecto_agua_3.src = 'data/imgns/efecto_agua_3.png';
+      var efecto_agua_4 = new Image();
+      efecto_agua_4.src = 'data/imgns/efecto_agua_4.png';
+      var efecto_agua_puntitos = new Image();
+      efecto_agua_puntitos.src = 'data/imgns/efecto_agua_puntitos.png';
+      var espuma_1 = new Image();
+      espuma_1.src = 'data/imgns/espuma_1.png';
+      var espuma_2 = new Image();
+      espuma_2.src = 'data/imgns/espuma_2.png';
+      var cascada_1 = new Image();
+      cascada_1.src = 'data/imgns/cascada_1.png';
+      var cascada_2 = new Image();
+      cascada_2.src = 'data/imgns/cascada_2.png';
+      var cascada_3 = new Image();
+      cascada_3.src = 'data/imgns/cascada_3.png';
+
+      fuerza_rio_base = 0.03;
+      fuerza_remos_base = 0.03;
+
+      revoluciones_pre = 0;
+      revoluciones_pre_canoa = 0;
+
+      var contando_efectos = 0;
+
+      mostrar_fuerzas = 1;
+      mostrar_resultante = 0;
+
+      var accion = 0;
+
+      var choque = 0;
+
+      var estamos_en_fase_final = 0;
+
+      caida_catarata = 0;
+
+      //caida_catarata = 200;
+
+      function starting(){
+
+        canoa.posX = nueva_posicion_tronco_Y(220, 400);
+        canoa.posY = 490;
+        canoa.vx = 0;
+        canoa.vy = 0;
+        puerto.posX = nueva_posicion_tronco_Y(450, 750);
+        tronco_1.posX = 0;
+        tronco_1.posY = 400;
+        tronco_1.vx = 1;
+        tronco_2.posX = 300;
+        tronco_2.posY = 450;
+        tronco_2.vx = 1.5;
+        //tronco_3.posX = 500;
+        //tronco_3.posY = 250;
+        //tronco_3.vx = 2;
+        
+        cascada_sonido.load();
+        cascada_sonido.play();
+
+      };
+
+      starting()
+
+      $('#boton_start').on('mousedown', function(){
+          pop.play();
+          $(this).fadeOut(0);
+          $('#slider_fake').fadeIn(0);
+          accion = 1; 
+          choque = 0;
+          $('.slider_opacidad').animate({ opacity: '0.5'}, 500);
+          remando(fuerza_remos);
+      });
+
+      function remando(fuerza_remos){
+
+        var control_remo = 0;
+
+        if( fuerza_remos < 0.06)intervalo_remos = 50;
+          if( fuerza_remos >= 0.06 && fuerza_remos < 0.012)intervalo_remos = 40;
+            if( fuerza_remos >= 0.012 && fuerza_remos < 0.018)intervalo_remos = 30;
+              if( fuerza_remos >= 0.018 && fuerza_remos < 0.024)intervalo_remos = 20;
+                if( fuerza_remos >= 0.024)intervalo_remos = 10;
+
+        if(choque == 0)remaRema()
+
+        function remaRema(){
+
+           setTimeout(function(){
+
+           if( control_remo == 20 )control_remo = 0; 
+
+           if( control_remo >= 0 && control_remo < 10){
+            canoa.src = 'data/imgns/barca_1.png';
+            }
+
+           if( control_remo >= 10 && control_remo < 20){
+            canoa.src = 'data/imgns/barca_2.png';
+          }
+
+           control_remo++
+
+           if( choque == 0 )remaRema();
+
+        }, intervalo_remos);
+
+        };
+
+      };
+
+      function nueva_posicion_tronco_Y(min, max) {
+         return Math.round(Math.random()*(max-min)+parseInt(min));
+      }
+/*
+      function tiempo_aparicion_tronco(min, max) {
+         return Math.round(Math.random()*(max-min)+parseInt(min));
+      }
+*/
+
+      function draw (image) {
+        image.draw(context);
+      }
+
+      //mouse = utils.captureMouse(canvas),
+
+      $('#calculos_final p').css({
+             'margin-top': '1%',
+             'margin-left': '15%'
+      });
+ 
+      setInterval(function(){
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        fuerza_rio = fuerza_rio_base*revoluciones_pre;
+        fuerza_remos = fuerza_remos_base*revoluciones_pre_canoa;
+
+      if( estamos_en_fase_final == 1 ){
+
+          posic_canoa_X = canoa.posX;
+          posic_canoa_Y = canoa.posY;
+          vel_canoa_X_final = (posic_canoa_X - 400)/50;
+          vel_canoa_Y_final = (posic_canoa_Y - 500)/50;
+          canoa.vx = vel_canoa_X_final;
+          canoa.vy = vel_canoa_Y_final;
+          if( vel_canoa_X_final > 0.1 || vel_canoa_X_final < -0.1)canoa.posX -= canoa.vx;
+          if( vel_canoa_Y_final > 0.1 || vel_canoa_Y_final < -0.1)canoa.posY -= canoa.vy;
+        
+        redondeo_rio = Math.round(fuerza_rio*300/0.03);
+        redondeo_remos = Math.round(fuerza_remos*300/0.03);
+
+        serch = Math.sqrt( Math.pow(redondeo_rio, 2) + Math.pow(redondeo_remos, 2) );
+
+
+          $('#calculos_final').html('<p><i>F</i><sub>r</sub> =&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'+Math.round(fuerza_rio*300/0.03)+'<sup>2</sup> + '+Math.round(fuerza_remos*300/0.03)+'<sup>2</sup>&nbsp&nbsp = &nbsp '+ (Math.round(serch*10)/10).toString().replace(/\./g,',') + ' N</p>');
+
+
+          $('#calculos_final p').css({
+             'margin-top': '4%',
+             'margin-left': '7%'
+          });
+        
+      }
+
+      if( choque == 0 ){
+      
+        contando_efectos++
+
+        if( accion == 1 ){
+          canoa.vx += canoa.ax;
+          canoa.vy += canoa.ay;
+          if( canoa.vx >= 0)canoa.posX += canoa.vx;
+          if( canoa.vy >= 0)canoa.posY -= canoa.vy;
+          
+          if( canoa.posX > 600)canoa.angle += 0.03;
+          console.log(canoa.angle)
+          
+        }
+
+        canoa.ax = fuerza_rio;
+        canoa.ay = fuerza_remos;
+        tronco_1.ax = fuerza_rio*4;
+        tronco_1.vx += tronco_1.ax; 
+        tronco_1.posX += tronco_1.vx;
+        tronco_2.ax = fuerza_rio*4;
+        tronco_2.vx += tronco_2.ax; 
+        tronco_2.posX += tronco_2.vx;
+        //tronco_3.ax = fuerza_rio*4;
+        //tronco_3.vx += tronco_3.ax; 
+        //tronco_3.posX += tronco_3.vx;
+
+        if( tronco_1.posX > 800 ){
+          tronco_1.posX = -60;
+          tronco_1.posY = nueva_posicion_tronco_Y(150, 470);
+          tronco_1.vx = 1;
+        }
+
+        if( tronco_2.posX > 800 ){
+          tronco_2.posX = -60;
+          tronco_2.posY = nueva_posicion_tronco_Y(150, 470);
+          tronco_2.vx = 1;
+        }
+
+        /*if( tronco_3.posX > 800 ){
+          tronco_3.posX = -60;
+          tronco_3.posY = nueva_posicion_tronco_Y(150, 470);
+          tronco_3.vx = 1;
+        }*/
+
+
+
+    
+          elemento_1 = boxes[0];
+          for (j = 1; j < boxes.length; j++) {
+            elemento_2 = boxes[j];
+
+            i_1 = elemento_1.posX + 25;
+            d_1 = elemento_1.posX + elemento_1.w - 25;
+            a_1 = elemento_1.posY;
+            b_1 = elemento_1.posY + elemento_1.h - 25;
+
+            i_2 = elemento_2.posX;
+            d_2 = elemento_2.posX + elemento_2.w;
+            a_2 = elemento_2.posY;
+            b_2 = elemento_2.posY + elemento_2.h;
+
+
+          if( d_2 > i_1 && b_2 > a_1 && a_2 < b_1 && i_2 < d_1 ){
+
+              if( j == 1 ){ //puerto
+                    choque = 1;
+                    $('#boton_reiniciar').fadeIn();
+                    $('#boton_final').fadeIn();
+                    bien.play()
+              }
+              if( j == 2 ){ //roca
+                    choque = 1;
+                    $('#boton_reiniciar').fadeIn();
+                    $('#boton_final').fadeIn();
+                    rocas.play()
+                    setTimeout(function(){
+                        mal.play()
+                    }, 1000)
+              }
+              if( j == 3 ){ //cascada
+                    choque = 1;
+                    $('#boton_reiniciar').fadeIn();
+                    $('#boton_final').fadeIn();
+                    grito.play()
+                    caida_catarata = 1;
+                    canoa.h = 0;
+                    setTimeout(function(){
+                        mal.play()
+                    }, 1500)
+              }
+              if( j > 3 ){ //troncos
+                    choque = 1;
+                    $('#boton_reiniciar').fadeIn();
+                    $('#boton_final').fadeIn();
+                    rocas.play()
+                    setTimeout(function(){
+                        mal.play()
+                    }, 1000)
+                  }
+
+          }
+
+        }
+
+        } //fin de if choque == 0
+
+      if( estamos_en_fase_final == 0){
+
+      if( contando_efectos > 0 && contando_efectos < 40 )context.drawImage(efecto_agua_1, 728, 110, 125, 435); //728, 110, 125, 435
+      if( contando_efectos > 25 && contando_efectos < 50 )context.drawImage(efecto_agua_2, 728, 110, 125, 435);  //728, 110, 125, 435
+      if( contando_efectos > 40 && contando_efectos < 75 )context.drawImage(efecto_agua_3, 728, 110, 125, 435); //728, 110, 125, 435
+      if( contando_efectos > 60 && contando_efectos < 100 )context.drawImage(efecto_agua_4, 728, 110, 125, 435); //728, 110, 125, 435
+      if( contando_efectos > 10 && contando_efectos < 30 || contando_efectos > 60 && contando_efectos < 80)context.drawImage(efecto_agua_puntitos, 728, 110, 125, 435);
+
+      if( contando_efectos > 0 && contando_efectos < 25 || contando_efectos > 50 && contando_efectos < 75)context.drawImage(espuma_1, 850, 60, 125, 550);
+      if( contando_efectos > 25 && contando_efectos < 50 || contando_efectos > 75 && contando_efectos < 100)context.drawImage(espuma_2, 850, 60, 125, 550);
+
+      if( contando_efectos >= 0 && contando_efectos < 16 || contando_efectos >= 50 && contando_efectos < 66)context.drawImage(cascada_1, 825, 60, 125, 550 ); //728, 110, 125, 435
+      if( contando_efectos >= 16 && contando_efectos < 32 || contando_efectos >= 66 && contando_efectos < 82)context.drawImage(cascada_2, 825, 60, 125, 550);  //728, 110, 125, 435
+      if( contando_efectos >= 32 && contando_efectos < 50 || contando_efectos >= 82 && contando_efectos < 100)context.drawImage(cascada_3, 825, 60, 125, 550);
+
+
+
+      if( contando_efectos == 100 )contando_efectos = 0;
+
+      
+      } // fin de estamos_en_fase_final == 0
+
+
+      boxes.forEach(draw);
+     
+
+
+      mostrar_fuerza_rio = Math.round(fuerza_rio*300/0.03);
+      mostrar_fuerza_remos = Math.round(fuerza_remos*300/0.03);
+
+      if( mostrar_fuerza_rio >= 0 || mostrar_fuerza_rio < 300){ mostrar_fuerza_rio_def = mostrar_fuerza_rio }
+        else{
+          if( mostrar_fuerza_rio < 0)mostrar_fuerza_rio_def = 0;
+          if( mostrar_fuerza_rio > 300)mostrar_fuerza_rio_def = 300;
+        }
+
+      if( mostrar_fuerza_remos >= 0 || mostrar_fuerza_remos < 300){ mostrar_fuerza_remos_def = mostrar_fuerza_remos }
+        else{
+          if( mostrar_fuerza_remos < 0)mostrar_fuerza_remos_def = 0;
+          if( mostrar_fuerza_remos > 300)mostrar_fuerza_remos_def = 300;
+        }
+
+
+      if( fuerza_rio >= 0){  $('#muestra_rio').html('<p>'+mostrar_fuerza_rio_def+ ' N</p>'); }
+      else{ $('#muestra_rio').html('<p>0 J</p>') };
+      if( fuerza_remos >= 0){ $('#muestra_remo').html('<p>'+mostrar_fuerza_remos_def+ ' N</p>'); }
+      else{ $('#muestra_remo').html('<p>0 J</p>') };
+
+      $('.muestra p').css({
+        'margin-top': '10%',
+       });   
+
+      }, 30);
+
+      setInterval(function(){
+
+        context_2.clearRect(0, 0, canvas_2.width, canvas_2.height);
+
+        context_2.beginPath()
+
+            //rio X
+          context_2.moveTo(canoa.posX + canoa.w/2, canoa.posY + canoa.h/2);
+          context_2.lineTo(canoa.posX + canoa.w/2 + (fuerza_rio*4000) -10, canoa.posY + canoa.h/2);
+          context_2.lineTo(canoa.posX + canoa.w/2 + (fuerza_rio*4000) - 10, canoa.posY + canoa.h/2 + 5);
+          context_2.lineTo(canoa.posX + canoa.w/2 + (fuerza_rio*4000), canoa.posY + canoa.h/2);
+          context_2.lineTo(canoa.posX + canoa.w/2 + (fuerza_rio*4000) -10, canoa.posY + canoa.h/2 - 5);
+          context_2.lineTo(canoa.posX + canoa.w/2 + (fuerza_rio*4000) -10, canoa.posY + canoa.h/2);
+           //remos Y
+          context_2.moveTo(canoa.posX + canoa.w/2, canoa.posY + canoa.h/2);
+          context_2.lineTo( canoa.posX + canoa.w/2 , canoa.posY + canoa.h/2 - (fuerza_remos*4000) + 10);
+          context_2.lineTo( canoa.posX + canoa.w/2 - 5 , canoa.posY + canoa.h/2 - (fuerza_remos*4000) + 10);
+          context_2.lineTo( canoa.posX + canoa.w/2 , canoa.posY + canoa.h/2 - (fuerza_remos*4000));
+          context_2.lineTo( canoa.posX + canoa.w/2 + 5, canoa.posY + canoa.h/2 - (fuerza_remos*4000) + 10);
+          context_2.lineTo( canoa.posX + canoa.w/2 , canoa.posY + canoa.h/2 - (fuerza_remos*4000) + 10);
+
+          a = (fuerza_rio);  //rio X
+          b = (fuerza_remos); //remos Y
+          h = Math.sqrt( Math.pow(a, 2) + Math.pow(b, 2));
+          alfa = Math.asin( b / h );
+          sin_alfa = Math.sin( alfa );
+          cos_alfa = Math.cos( alfa );
+
+          if(mostrar_resultante == 1){
+            
+              context_2.moveTo(canoa.posX + canoa.w/2, canoa.posY + canoa.h/2);
+              
+              context_2.lineTo( canoa.posX + canoa.w/2 + (fuerza_rio*4000) - (10*cos_alfa), canoa.posY + canoa.h/2 - (fuerza_remos*4000) + (10*sin_alfa));
+
+              context_2.lineTo( canoa.posX + canoa.w/2 + (fuerza_rio*4000) - (10*cos_alfa) - (5*sin_alfa), canoa.posY + canoa.h/2 - (fuerza_remos*4000) + (10*sin_alfa) - (5*cos_alfa));
+
+              context_2.lineTo( canoa.posX + canoa.w/2 + (fuerza_rio*4000), canoa.posY + canoa.h/2 - (fuerza_remos*4000));
+
+              context_2.lineTo( canoa.posX + canoa.w/2 + (fuerza_rio*4000) - (10*cos_alfa) + (5*sin_alfa), canoa.posY + canoa.h/2 - (fuerza_remos*4000) + (10*sin_alfa) + (5*cos_alfa));
+
+              context_2.lineTo( canoa.posX + canoa.w/2 + (fuerza_rio*4000) - (10*cos_alfa), canoa.posY + canoa.h/2 - (fuerza_remos*4000) + (10*sin_alfa));
+
+             /*  context_2.lineTo( canoa.posX + canoa.w/2 + (fuerza_rio*4000) - (10*cos_alfa), canoa.posY + canoa.h/2 - (fuerza_remos*4000) + (10*sin_alfa));*/
+         
+          }
+          
+          if(mostrar_fuerzas == 1 && caida_catarata == 0){ 
+
+              context_2.lineWidth = 3;
+              context_2.strokeStyle = 'red';
+              context_2.stroke();
+              context_2.fillStyle = 'red';
+              context_2.fill();
+              context_2.closePath();
+          }
+          
+
+      }, 50)
+
+    setInterval(function(){
+
+        context_3.clearRect(0, 0, canvas_3.width, canvas_3.height);
+
+        context_3.beginPath()
+
+
+          if(mostrar_resultante == 1){
+            
+              ///////lineas discontinuas
+              
+              //vertical
+              context_3.moveTo(canoa.posX + canoa.w/2 + (fuerza_rio*4000) + 2, canoa.posY + canoa.h/2);
+              context_3.lineTo( canoa.posX + canoa.w/2 + (fuerza_rio*4000) + 2, canoa.posY + canoa.h/2 - (fuerza_remos*4000));
+
+              //horizontal
+              context_3.moveTo(canoa.posX + canoa.w/2 , canoa.posY + canoa.h/2 - (fuerza_remos*4000) -2);
+              context_3.lineTo(canoa.posX + canoa.w/2 + (fuerza_rio*4000), canoa.posY + canoa.h/2 - (fuerza_remos*4000) - 2);
+            
+          }
+          
+          if(mostrar_fuerzas == 1){ 
+
+              context_3.setLineDash([5]);
+              context_3.lineWidth = 1;
+              context_3.lineCap = 'round';
+              context_3.strokeStyle = 'red';
+              context_3.stroke();
+              context_3.fillStyle = 'red';
+              context_3.fill();
+              context_3.closePath()
+          }
+          
+
+      }, 50)
+/*
+      setInterval(function(){
+
+      }, 200)
+*/
+$('#cartel').on('mousedown', function(){
+
+    pop.play();
+    $(this).fadeOut(100);
+    $('#boton_start').fadeIn(300);
+});
+
+$('#boton_fuerzas_0').on('mousedown', function(){
+
+    pop.play();
+    $(this).fadeOut(0);
+    $('#boton_fuerzas_1').fadeIn(0);
+    mostrar_fuerzas = 0;
+});
+$('#boton_fuerzas_1').on('mousedown', function(){
+
+    pop.play();
+    $(this).fadeOut(0);
+    $('#boton_fuerzas_0').fadeIn(0);
+    mostrar_fuerzas = 1;
+});
+
+$('#boton_resultante_0').on('mousedown', function(){
+
+    pop.play();
+    $(this).fadeOut(0);
+    $('#boton_resultante_1').fadeIn(0);
+    $('.muestra').fadeOut(500);
+    //mostrar_resultante = 0;
+});
+$('#boton_resultante_1').on('mousedown', function(){
+
+    pop.play();
+    $(this).fadeOut(0);
+    $('#boton_resultante_0').fadeIn(0);
+    $('.muestra').fadeIn(500);
+    //mostrar_resultante = 1;
+});
+
+$('#boton_reiniciar').on('mousedown', function(){
+
+    pop.play();
+    $(this).fadeOut(0);
+    canoa.h = 90;
+    canoa.angle = 0;
+    $('#boton_final').fadeOut();
+    $('#slider_fake').fadeOut();
+    $('#boton_start').delay(1000).fadeIn(200);
+    $('.slider_opacidad').css('opacity', '1');
+    contando_efectos = 0;
+    caida_catarata = 0;
+    accion = 0;
+    choque = 0;
+    estamos_en_fase_final = 0;
+    starting();
+
+});
+
+$('#boton_final').on('mousedown', function(){
+    $(this).fadeOut();
+    pop.play();
+    $('#boton_reiniciar').fadeOut();
+    fase_final();
+    cascada_sonido.pause();
+    
+});
+
+function fase_final(){
+
+    canoa.angle = 0;
+    caida_catarata = 0;
+    estamos_en_fase_final = 1;
+    $('#fondo_rio').fadeOut(0);
+    tronco_1.h = 0;
+    tronco_2.h = 0;
+    //tronco_3.h = 0;
+    puerto.h = 0;
+    canoa.h = 90;
+    mostrar_fuerzas = 1;
+    $('#texto_3, #texto_4').fadeOut(200);
+    $('.boton_f').fadeOut(200);
+    $('.muestra').fadeIn(500);
+    $('#cartel_final').delay(2000).fadeIn(500);
+    $('#calculos_final').delay(4000).fadeIn(1000);
+    $('#raiz').delay(4000).fadeIn(1000);
+    $('#muestra_rio').delay(4000).animate({ top: '85%'}, 500)
+                                  .animate({ left: '63%'}, 500);
+    $('#muestra_remo').delay(4000).animate({ top: '55%'}, 500)
+                                  .animate({ left: '43%'}, 500);
+    $('#fondo_final').delay(0).fadeIn(2000);
+    $('#boton_principio').delay(15000).fadeIn(200);
+    $('.slider_opacidad').delay(5000).animate({ opacity: '1'}, 500);
+    $('#slider_fake').delay(5000).fadeOut(0);
+
+    setTimeout(function(){
+
+      $('#slider_boton').animate({ left: '0%'}, 500)
+                        .animate({ left: '70%'}, 500);
+
+      $('#slider_boton_canoa').delay(1000).animate({ left: '0%'}, 500)
+                        .animate({ left: '50%'}, 500);
+
+
+
+    }, 8000);
+
+
+    
+
+
+    setTimeout(function(){
+      mostrar_resultante = 1;
+    }, 8000);
+
+  
+};
+
+$('#boton_principio').on('mousedown', function(){
+    $(this).fadeOut();
+    pop.play();
+    estamos_en_fase_final = 0;
+    choque = 0;
+    accion = 0;
+    $('#fondo_rio').fadeIn(0);
+    tronco_1.h = 20;
+    tronco_2.h = 20;
+    //tronco_3.h = 20;
+    puerto.h = 135;
+    mostrar_fuerzas = 1;
+    mostrar_resultante = 0;
+    $('#texto_3, #texto_4').fadeIn(200);
+    $('.boton_f').fadeIn(200);
+    $('#calculos_final').fadeOut;
+    $('#raiz').fadeOut(200);
+    $('#calculos_final').fadeOut(200);
+    $('#muestra_rio').css({ top: '21%', left: '18%'});
+    $('#muestra_remo').css({ top: '42%', left: '18%'});                               
+    $('#fondo_final').fadeOut(0);
+    $('#boton_fuerzas_0').fadeIn(0);
+    $('#boton_resultante_0').fadeIn(0);
+    $('#boton_fuerzas_1').fadeOut(0);
+    $('#boton_resultante_1').fadeOut(0);
+    $('#boton_start').delay(1000).fadeIn(500);
+    $('#cartel_final').fadeOut(0);
+
+    starting()
+    
+});
+
+
+   
+});  // fin del onload del ppio
+
+    </script>
+  </body>
+</html>
